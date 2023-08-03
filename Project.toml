@@ -1,0 +1,13 @@
+name = "DualDiff"
+uuid = "9c801eb6-d9fb-41a9-8159-de68b1430c15"
+authors = ["Pablo Rodríguez Sánchez <pablo.rodriguez.sanchez@gmail.com> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
