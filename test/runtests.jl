@@ -51,5 +51,17 @@ end
    
     @test u * v == y
     @test v * u == y
+
+end
+
+@testset "Dual division" begin
     
+    u = Dual(4, 1)
+    v = Dual(2, 2)
+
+    @test u / v == Dual(4 / 2, 
+                        (2*1 - 2*4)/2^2)
+    
+    @test v / u == Dual(2 / 4, 
+                        (4*2 - 2)/4^2)
 end
