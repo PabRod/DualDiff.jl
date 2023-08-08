@@ -65,3 +65,18 @@ end
     @test v / u == Dual(2 / 4, 
                         (4*2 - 2)/4^2)
 end
+
+@testset "Dual powers" begin
+    
+    u = Dual(4, 1)
+    y = Dual(64, 3*4^2)
+
+    @test u^3 == y
+
+    #TODO: fix this
+    #q = Dual(3, 1)
+    #z = Dual(8, log(2)*2^3)
+    #
+    #@test 2^q == z
+
+end

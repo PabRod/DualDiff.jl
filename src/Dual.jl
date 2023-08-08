@@ -56,3 +56,11 @@ end
 function Base.:\(self::Union{Real,Dual}, other::Union{Real,Dual})
     return other / self
 end
+
+function Base.:^(self::Dual, other::Real)
+    self, other = Dual(self), Dual(other) # Coerce into Dual
+    y = self.x^other.x
+    dy = other.x * self.x^(other.x - 1) * self.dx
+    return Dual(y, dy)
+end
+
