@@ -38,3 +38,10 @@ function Base.:-(self::Union{Real,Dual}, other::Union{Real,Dual})
     self, other = Dual(self), Dual(other) # Coerce into Dual
     return self + (-other)
 end
+
+function Base.:*(self::Union{Real,Dual}, other::Union{Real,Dual})
+    self, other = Dual(self), Dual(other) # Coerce into Dual
+    y = self.x * other.x
+    dy = self.dx * other.x + self.x * other.dx
+    return Dual(y, dy)
+end

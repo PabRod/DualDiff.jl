@@ -40,5 +40,16 @@ end
 
     @test u - v == y
     @test v - u == -y
+
+end
+
+@testset "Dual multiplication" begin
+
+    u = Dual(2, 1)
+    v = Dual(3, 0)
+    y = Dual(6, 3)
+   
+    @test u * v == y
+    @test v * u == y
     
 end
