@@ -19,3 +19,15 @@ using Test
     @test z != Dual(0, 1)
 
 end
+
+@testset "Dual addition" begin
+
+    u = Dual(2, 1)
+    v = Dual(1, 0)
+    y = Dual(3, 1)
+
+    @test u == +u
+    @test y == u + v
+    @test y == v + u
+    
+end

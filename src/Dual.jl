@@ -18,3 +18,14 @@ struct Dual
     end
 
 end
+
+## Redefine base operators
+
+function Base.:+(self::Dual)
+    return self
+end
+
+function Base.:+(self::Union{Real,Dual}, other::Union{Real,Dual})
+    self, other = Dual(self), Dual(other) # Coerce into Dual
+    return Dual(self.x + other.x, self.dx + other.dx)
+end
