@@ -29,5 +29,16 @@ end
     @test u == +u
     @test y == u + v
     @test y == v + u
+
+end
+
+@testset "Dual subtraction" begin
+
+    u = Dual(2, 1)
+    v = Dual(1, 0)
+    y = Dual(1, 1)
+
+    @test u - v == y
+    @test v - u == -y
     
 end
