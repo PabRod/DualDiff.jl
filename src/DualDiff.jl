@@ -1,5 +1,5 @@
 module DualDiff
 
-# Write your package code here.
+include("Dual.jl")
 
 end
