@@ -80,3 +80,24 @@ end
     #@test 2^q == z
 
 end
+
+@testset "Algebraic functions" begin
+
+    u = Dual(4, 1)
+
+    P = x -> 2*x^3 - 5*x + 1
+    Q = x -> x^2 - 1
+    PQ = x -> P(x) * Q(x)
+    PQi = x -> P(x) / Q(x)
+
+    # References (calculated manually)
+    dP = x -> 6*x^2 - 5
+    dQ = x -> 2*x
+
+    @test P(u).dx == dP(u).x
+    @test Q(u).dx == dQ(u).x
+    @test PQ(u).dx == P(u).dx * Q(u).x + P(u).x * Q(u).dx # Product rule
+    @test PQi(u).dx == (P(u).dx * Q(u).x - P(u).x * Q(u).dx) / Q(u).x^2 # Quotient rule
+    @test P(Q(u)).dx == dP(Q(u).x) * dQ(u).x * u.dx # Chain rule
+
+end
