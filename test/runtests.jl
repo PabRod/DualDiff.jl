@@ -102,7 +102,9 @@ end
 
 end
 
-@testset "Trigonometric functions" begin
+@testset "Transcendent functions" begin
     @test sin(Dual(0, 1)) == Dual(0, 1)
     @test cos(Dual(0, 1)) == Dual(1, 0)
+    @test tan(Dual(0, 1)) == Dual(0, 1)
+    @test exp(Dual(0, 1)) == Dual(1, 1)
 end

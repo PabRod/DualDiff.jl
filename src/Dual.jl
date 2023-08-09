@@ -28,10 +28,10 @@ const DualNumber = Union{Dual, Number}
 
 import Base: ==, !=, +, -, *, /, \
 
-==(self::Dual, other::Dual) = return (self.x == other.x) && (self.dx == other.dx)
-!=(self::Dual, other::Dual) = return !(self == other)
-+(z::Dual) = return z
--(z::Dual) = return Dual(-z.x, -z.dx)
+==(self::Dual, other::Dual) = (self.x == other.x) && (self.dx == other.dx)
+!=(self::Dual, other::Dual) = !(self == other)
++(z::Dual) = z
+-(z::Dual) = Dual(-z.x, -z.dx)
 
 function +(self::DualNumber, other::DualNumber)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
@@ -68,18 +68,14 @@ function Base.:^(self::Dual, other::Real)::Dual
     return Dual(y, dy)
 end
 
-import Base: sin, cos
+# Derivatives table
+import Base: sin, cos, tan, exp
 
 function _factory(f, df)
     return z -> Dual(f(z.x), df(z.x) * z.dx)
 end
 
-function sin(z::DualNumber)
-    z = Dual(z)
-    return _factory(sin, cos)(z)
-end
-
-function cos(z::DualNumber)
-    z = Dual(z)
-    return _factory(cos, z -> -sin(z))(z)
-end
+sin(z::DualNumber) = _factory(sin, cos)(Dual(z))
+cos(z::DualNumber) = _factory(cos, z -> -sin(z))(Dual(z))
+tan(z::DualNumber) = sin(z) / cos(z)
+exp(z::DualNumber) = _factory(exp, exp)(Dual(z))
