@@ -101,3 +101,8 @@ end
     @test P(Q(u)).dx == dP(Q(u).x) * dQ(u).x * u.dx # Chain rule
 
 end
+
+@testset "Trigonometric functions" begin
+    @test sin(Dual(0, 1)) == Dual(0, 1)
+    @test cos(Dual(0, 1)) == Dual(1, 0)
+end
