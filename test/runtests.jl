@@ -24,6 +24,15 @@ function _testfactory(f, df; xs = LinRange(-2, 2, 10), approx=false)
         end
     end
 
+    # Consider some vectorized tests:
+    # matrix = f.(xs)
+    # derivs = map(x -> x.dx, matrix) # Just extract the .dx component
+    # if approx
+    #     @test all(isapprox.(derivs, df.(xs)))
+    # else
+    #     @test all(derivs .== df.(xs))
+    # end
+
 end
 
 @testset "Dual basics" begin

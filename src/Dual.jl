@@ -28,7 +28,6 @@ const DualNumber = Union{Dual, Number}
 import Base: ==, !=, >, >=, <, <=
 
 ==(self::Dual, other::Dual) = (self.x == other.x) && (self.dx == other.dx)
-!=(self::Dual, other::Dual) = !(self == other)
 >(self::Dual, other::Dual) = self.x > other.x
 >=(self::Dual, other::Dual) = self.x >= other.x
 <(self::Dual, other::Dual) = self.x < other.x
