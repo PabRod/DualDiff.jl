@@ -147,6 +147,13 @@ end
         x -> -2 * exp(cos(x^2)) * sin(x^2) * x,
         approx = true
     )
+
+    _testfactory(
+        x -> csc(x),
+        x -> -csc(x) * cot(x),
+        approx=true
+    )
+
 end
 
 @testset "Defined programatically" begin
@@ -165,10 +172,7 @@ end
 
 end
 
-@testset "Decorator" begin
-    _testfactory(
-        x -> exp(cos(x^2)),
-        x -> -2 * exp(cos(x^2)) * sin(x^2) * x,
-        approx = true
-    )
+@testset "Other functions" begin
+    _testfactory(x -> abs(x), x -> 1; xs=2)
+    _testfactory(x -> abs(x), x -> -1; xs=-2)
 end

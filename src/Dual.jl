@@ -35,11 +35,10 @@ import Base: ==, !=, >, >=, <, <=
 <=(self::Dual, other::Dual) = self.x <= other.x
 
 ## Algebraic operators
-import Base: +, -, *, /, \, ^, inv
+import Base: +, -, *, /, \, ^
 
 +(z::Dual) = z
 -(z::Dual) = Dual(-z.x, -z.dx)
-inv(z::Dual) = Dual(inv(z.x), -z.dx/z.x^2)
 
 function +(self::DualNumber, other::DualNumber)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
