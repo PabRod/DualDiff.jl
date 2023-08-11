@@ -100,6 +100,7 @@ end
     y = Dual(64, 3*4^2)
 
     @test u^3 == y
+    @test u^-1 == Dual(1/4, -1/16)
 
     # Number^Dual
     q = Dual(3, 1)
