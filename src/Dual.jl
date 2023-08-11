@@ -19,6 +19,7 @@ struct Dual
 
 end
 
+## Auxiliary data type
 const DualNumber = Union{Dual, Number}
 
 ## Redefine base operators
@@ -91,11 +92,11 @@ end
 # Derivatives table
 import Base: sin, cos, tan, exp
 
-function _factory(f, df)
+function _factory(f::Function, df::Function)::Function
     return z -> Dual(f(z.x), df(z.x) * z.dx)
 end
 
-sin(z::DualNumber) = _factory(sin, cos)(Dual(z))
-cos(z::DualNumber) = _factory(cos, z -> -sin(z))(Dual(z))
-tan(z::DualNumber) = sin(z) / cos(z)
-exp(z::DualNumber) = _factory(exp, exp)(Dual(z))
+sin(z::Dual) = _factory(sin, cos)(z)
+cos(z::Dual) = _factory(cos, x -> -sin(x))(z)
+tan(z::Dual) = sin(z) / cos(z)
+exp(z::Dual) = _factory(exp, exp)(z)
