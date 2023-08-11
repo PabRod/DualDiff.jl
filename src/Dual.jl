@@ -64,6 +64,20 @@ function Base.:^(self::Dual, other::Real)::Dual
     return Dual(y, dy)
 end
 
+function Base.:^(self::Real, other::Dual)::Dual
+    self, other = Dual(self), Dual(other) # Coerce into Dual
+    y = self.x^other.x
+    dy = self.x^other.x * log(self.x) * other.dx
+    return Dual(y, dy)
+end
+
+function Base.:^(self::Dual, other::Dual)::Dual
+    self, other = Dual(self), Dual(other) # Coerce into Dual
+    y = self.x^other.x
+    dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
+    return Dual(y, dy)
+end
+
 # Derivatives table
 import Base: sin, cos, tan, exp
 

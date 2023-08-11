@@ -92,17 +92,21 @@ end
 end
 
 @testset "Dual powers" begin
-    
+
+    # Dual^Number
     u = Dual(4, 1)
     y = Dual(64, 3*4^2)
 
     @test u^3 == y
 
-    #TODO: fix this
-    #q = Dual(3, 1)
-    #z = Dual(8, log(2)*2^3)
-    #
-    #@test 2^q == z
+    # Number^Dual
+    q = Dual(3, 1)
+    z = Dual(8, log(2)*2^3)
+    
+    @test 2^q == z
+
+    # Dual^Dual
+    @test u^q == Dual(4^3, 4^3 * log(4) + 3*4^(3-1))
 
 end
 
@@ -135,9 +139,6 @@ end
 end
 
 @testset "Composite functions" begin
-    f = x -> exp(cos(x^2))
-    df = x -> -2* exp(cos(x^2)) * sin(x^2) * x # Derivative, calculated by hand
-
     _testfactory(
         x -> exp(cos(x^2)),
         x -> -2 * exp(cos(x^2)) * sin(x^2) * x,
@@ -150,7 +151,7 @@ end
     """ Just a code-intense way of expressing a polynomial of 3rd degree"""
     function p(x)
         v = 0
-        for n in [0.0, 1.0, 2.0, 3.0]
+        for n in [0, 1, 2, 3]
             v += x^n
         end
 
