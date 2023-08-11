@@ -30,6 +30,7 @@ end
 
     z = Dual(2, 1)
     q = Dual(2)
+    v = Dual(3, 0)
 
     ## Test  constructor
     @test z.x == 2
@@ -42,6 +43,7 @@ end
     @test z == Dual(2, 1)
     @test z != Dual(2, 0)
     @test z != Dual(0, 1)
+    @test z < v
 
 end
 

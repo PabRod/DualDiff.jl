@@ -19,13 +19,23 @@ struct Dual
 
 end
 
-## Redefine base operators
 const DualNumber = Union{Dual, Number}
 
-import Base: ==, !=, +, -, *, /, \
+## Redefine base operators
+
+## Comparers
+import Base: ==, !=, >, >=, <, <=
 
 ==(self::Dual, other::Dual) = (self.x == other.x) && (self.dx == other.dx)
 !=(self::Dual, other::Dual) = !(self == other)
+>(self::Dual, other::Dual) = self.x > other.x
+>=(self::Dual, other::Dual) = self.x >= other.x
+<(self::Dual, other::Dual) = self.x < other.x
+<=(self::Dual, other::Dual) = self.x <= other.x
+
+## Algebraic operators
+import Base: +, -, *, /, \, ^
+
 +(z::Dual) = z
 -(z::Dual) = Dual(-z.x, -z.dx)
 
@@ -57,21 +67,21 @@ function \(self::DualNumber, other::DualNumber)::Dual
     return other / self
 end
 
-function Base.:^(self::Dual, other::Real)::Dual
+function ^(self::Dual, other::Real)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x^other.x
     dy = other.x * self.x^(other.x - 1) * self.dx
     return Dual(y, dy)
 end
 
-function Base.:^(self::Real, other::Dual)::Dual
+function ^(self::Real, other::Dual)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x^other.x
     dy = self.x^other.x * log(self.x) * other.dx
     return Dual(y, dy)
 end
 
-function Base.:^(self::Dual, other::Dual)::Dual
+function ^(self::Dual, other::Dual)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x^other.x
     dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
