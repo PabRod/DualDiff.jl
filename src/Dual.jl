@@ -35,10 +35,11 @@ import Base: ==, !=, >, >=, <, <=
 <=(self::Dual, other::Dual) = self.x <= other.x
 
 ## Algebraic operators
-import Base: +, -, *, /, \, ^
+import Base: +, -, *, /, \, ^, inv
 
 +(z::Dual) = z
 -(z::Dual) = Dual(-z.x, -z.dx)
+inv(z::Dual) = Dual(inv(z.x), -z.dx/z.x^2)
 
 function +(self::DualNumber, other::DualNumber)::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
@@ -88,15 +89,3 @@ function ^(self::Dual, other::Dual)::Dual
     dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
     return Dual(y, dy)
 end
-
-# Derivatives table
-import Base: sin, cos, tan, exp
-
-function _factory(f::Function, df::Function)::Function
-    return z -> Dual(f(z.x), df(z.x) * z.dx)
-end
-
-sin(z::Dual) = _factory(sin, cos)(z)
-cos(z::Dual) = _factory(cos, x -> -sin(x))(z)
-tan(z::Dual) = sin(z) / cos(z)
-exp(z::Dual) = _factory(exp, exp)(z)
