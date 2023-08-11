@@ -1,6 +1,31 @@
 using DualDiff
 using Test
 
+
+"""
+    _testfactory(f, df, xs = [0.0, 1.0])
+
+    f: a function of x
+    df: its exact derivative, computed manually
+    xs: values to be tested
+    approx: use isapprox instead of ==
+
+    Many of the tests involve checking that the automatic derivative
+    is correct. This auxiliary method simplifies the task
+"""
+function _testfactory(f, df; xs = LinRange(-2, 2, 10), approx=false)
+    f = autodifferentiable(f)
+
+    for x in xs
+        if approx
+            @test isapprox(f(x).dx, df(x))
+        else
+            @test f(x).dx == df(x)
+        end
+    end
+
+end
+
 @testset "Dual basics" begin
 
     z = Dual(2, 1)
@@ -103,17 +128,21 @@ end
 end
 
 @testset "Transcendent functions" begin
-    @test sin(Dual(0, 1)) == Dual(0, 1)
-    @test cos(Dual(0, 1)) == Dual(1, 0)
-    @test tan(Dual(0, 1)) == Dual(0, 1)
-    @test exp(Dual(0, 1)) == Dual(1, 1)
+    _testfactory(sin, cos)
+    _testfactory(cos, x -> -sin(x))
+    _testfactory(tan, x -> 1 / cos(x)^2)
+    _testfactory(exp, exp)
 end
 
 @testset "Composite functions" begin
     f = x -> exp(cos(x^2))
     df = x -> -2* exp(cos(x^2)) * sin(x^2) * x # Derivative, calculated by hand
 
-    @test f(Dual(0, 1)).dx == df(0)
+    _testfactory(
+        x -> exp(cos(x^2)),
+        x -> -2 * exp(cos(x^2)) * sin(x^2) * x,
+        approx = true
+    )
 end
 
 @testset "Defined programatically" begin
@@ -128,16 +157,14 @@ end
         return v
     end
 
-    df = x -> 3x^2 + 2x + 1
-
-    @test p(Dual(3, 1)).dx == df(3) 
+    _testfactory(p, x -> 3x^2 + 2x + 1)
 
 end
 
 @testset "Decorator" begin
-    f = x -> exp(cos(x^2))
-    f = autodifferentiable(f)
-    df = x -> -2 * exp(cos(x^2)) * sin(x^2) * x # Derivative, calculated by hand
-
-    @test f(0).dx == df(0)
+    _testfactory(
+        x -> exp(cos(x^2)),
+        x -> -2 * exp(cos(x^2)) * sin(x^2) * x,
+        approx = true
+    )
 end
