@@ -133,3 +133,11 @@ end
     @test p(Dual(3, 1)).dx == df(3) 
 
 end
+
+@testset "Decorator" begin
+    f = x -> exp(cos(x^2))
+    f = autodifferentiable(f)
+    df = x -> -2 * exp(cos(x^2)) * sin(x^2) * x # Derivative, calculated by hand
+
+    @test f(0).dx == df(0)
+end
