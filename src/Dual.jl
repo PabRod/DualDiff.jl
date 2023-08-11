@@ -17,10 +17,6 @@ struct Dual
         return x
     end
 
-    # Consider using this instead:
-    # convert(::Type{Dual}, x::Dual) = return x
-    # convert(::Type{Dual}, x::Number) = return Dual(x, 0)
-
 end
 
 ## Redefine base operators

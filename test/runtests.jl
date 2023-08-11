@@ -108,3 +108,28 @@ end
     @test tan(Dual(0, 1)) == Dual(0, 1)
     @test exp(Dual(0, 1)) == Dual(1, 1)
 end
+
+@testset "Composite functions" begin
+    f = x -> exp(cos(x^2))
+    df = x -> -2* exp(cos(x^2)) * sin(x^2) * x # Derivative, calculated by hand
+
+    @test f(Dual(0, 1)).dx == df(0)
+end
+
+@testset "Defined programatically" begin
+
+    """ Just a code-intense way of expressing a polynomial of 3rd degree"""
+    function p(x)
+        v = 0
+        for n in [0.0, 1.0, 2.0, 3.0]
+            v += x^n
+        end
+
+        return v
+    end
+
+    df = x -> 3x^2 + 2x + 1
+
+    @test p(Dual(3, 1)).dx == df(3) 
+
+end
