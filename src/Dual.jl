@@ -67,22 +67,19 @@ function \(self::DualNumber, other::DualNumber)::Dual
     return other / self
 end
 
-function ^(self::Dual, other::Real)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x^other.x
-    dy = other.x * self.x^(other.x - 1) * self.dx
+function ^(self::Dual, p::Real)::Dual
+    y = self.x^p
+    dy = p * self.x^(p - 1) * self.dx
     return Dual(y, dy)
 end
 
-function ^(self::Real, other::Dual)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x^other.x
-    dy = self.x^other.x * log(self.x) * other.dx
+function ^(x::Real, other::Dual)::Dual
+    y = x^other.x
+    dy = x^other.x * log(x) * other.dx
     return Dual(y, dy)
 end
 
 function ^(self::Dual, other::Dual)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x^other.x
     dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
     return Dual(y, dy)
