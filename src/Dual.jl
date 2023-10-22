@@ -11,7 +11,7 @@ struct Dual
     end
 
     """ If passed a Dual, just return it
-    
+
     This will be handy later """
     function Dual(x::Dual)::Dual
         return x
@@ -67,20 +67,13 @@ function \(self::DualNumber, other::DualNumber)::Dual
     return other / self
 end
 
-function ^(self::Dual, p::Real)::Dual
-    y = self.x^p
-    dy = p * self.x^(p - 1) * self.dx
-    return Dual(y, dy)
-end
-
-function ^(x::Real, other::Dual)::Dual
-    y = x^other.x
-    dy = x^other.x * log(x) * other.dx
-    return Dual(y, dy)
-end
-
-function ^(self::Dual, other::Dual)::Dual
+function ^(self::DualNumber, other::DualNumber)::Dual
+    self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x^other.x
-    dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
+    if other.dx == 0 # This corresponds to the case u(x)^k
+        dy = other.x * self.x^(other.x - 1) * self.dx
+    else # This corresponds to the more general case u(x)^v(x), but involves a logarithm that turns complex for negative numbers
+        dy = other.x * self.x^(other.x - 1) * self.dx + self.x^other.x * log(self.x) * other.dx
+    end
     return Dual(y, dy)
 end
