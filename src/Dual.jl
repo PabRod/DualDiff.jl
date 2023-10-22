@@ -12,9 +12,6 @@ struct Dual <: Number
 
 end
 
-## Auxiliary data type
-const DualNumber = Union{Dual, Number}
-
 ## Redefine base operators
 
 ## Comparers
@@ -31,48 +28,24 @@ import Base: +, -, *, /, \, ^
 
 -(z::Dual) = Dual(-z.x, -z.dx)
 
-function +(self::Dual, other::Dual)::Dual
+function +(self::Union{Integer,Dual}, other::Union{Integer,Dual})::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     return Dual(self.x + other.x, self.dx + other.dx)
 end
 
-function +(self::Dual, other::Integer)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    return Dual(self.x + other.x, self.dx + other.dx)
-end
-
-function -(self::Dual, other::Dual)::Dual
+function -(self::Union{Integer,Dual}, other::Union{Integer,Dual})::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     return self + (-other)
 end
 
-function -(self::Dual, other::Integer)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    return self + (-other)
-end
-
-function *(self::Dual, other::Dual)::Dual
+function *(self::Union{Integer, Dual}, other::Union{Integer, Dual})::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x * other.x
     dy = self.dx * other.x + self.x * other.dx
     return Dual(y, dy)
 end
 
-function *(self::Dual, other::Integer)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x * other.x
-    dy = self.dx * other.x + self.x * other.dx
-    return Dual(y, dy)
-end
-
-function *(self::Integer, other::Dual)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x * other.x
-    dy = self.dx * other.x + self.x * other.dx
-    return Dual(y, dy)
-end
-
-function /(self::Dual, other::Dual)::Dual
+function /(self::Union{Integer, Dual}, other::Union{Integer, Dual})::Dual
     self, other = Dual(self), Dual(other) # Coerce into Dual
     y = self.x / other.x
     dy = (self.dx * other.x - self.x * other.dx) / (other.x)^2
@@ -83,30 +56,13 @@ function \(self::Dual, other::Dual)::Dual
     return other / self
 end
 
-function ^(self::Dual, other::Real)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
+function ^(self::Union{Integer, Dual}, other::Dual)::Dual
+    self = Dual(self)
     y = self.x^other.x
-    dy = other.x * self.x^(other.x - 1) * self.dx
-    return Dual(y, dy)
-end
-
-function ^(self::Dual, other::Integer)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x^other.x
-    dy = other.x * self.x^(other.x - 1) * self.dx
-    return Dual(y, dy)
-end
-
-function ^(self::Real, other::Dual)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x^other.x
-    dy = self.x^other.x * log(self.x) * other.dx
-    return Dual(y, dy)
-end
-
-function ^(self::Dual, other::Dual)::Dual
-    self, other = Dual(self), Dual(other) # Coerce into Dual
-    y = self.x^other.x
-    dy = self.x^other.x * log(self.x) * other.dx + other.x * self.x^(other.x - 1) * self.dx
+    if other.dx == 0 # This corresponds to the case u(x)^k
+        dy = other.x * self.x^(other.x - 1) * self.dx
+    else # This corresponds to the more general case u(x)^v(x), but involves a logarithm that turns complex for negative numbers
+        dy = other.x * self.x^(other.x - 1) * self.dx + self.x^other.x * log(self.x) * other.dx
+    end
     return Dual(y, dy)
 end
