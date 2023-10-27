@@ -1,4 +1,4 @@
-export autodifferentiable
+export autodifferentiable, derivative
 
 """
     autodifferentiable(f)
@@ -22,4 +22,17 @@ function autodifferentiable(f)
     end
 
     return decorated
+end
+
+"""
+    derivative(f)
+
+    Seamlessly turns a given function f
+    into
+    the function's derivative
+"""
+function derivative(f)
+    f = autodifferentiable(f)
+    df = x -> f(x).dx
+    return df
 end

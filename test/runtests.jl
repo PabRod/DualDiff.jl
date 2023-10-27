@@ -1,7 +1,6 @@
 using DualDiff
 using Test
 
-
 """
     _testfactory(f, df, xs = [0.0, 1.0])
 
@@ -14,13 +13,13 @@ using Test
     is correct. This auxiliary method simplifies the task
 """
 function _testfactory(f, df; xs = LinRange(-2, 2, 10), approx=false)
-    f = autodifferentiable(f)
+    df_dual = derivative(f)
 
     for x in xs
         if approx
-            @test isapprox(f(x).dx, df(x))
+            @test isapprox(df_dual(x), df(x))
         else
-            @test f(x).dx == df(x)
+            @test df_dual(x) == df(x)
         end
     end
 
